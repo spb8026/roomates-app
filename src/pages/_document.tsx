@@ -4,6 +4,7 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head />
+        <link rel="manifest" href="/maifest.json" />
       <body>
         <Main />
         <NextScript />
