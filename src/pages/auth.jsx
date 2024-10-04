@@ -21,9 +21,19 @@ export default function Auth() {
       });
       if (error) setError(error.message);
     };
+
+    const Styles = {
+        loginBody: {
+            width: '100vw-10px',
+            height: '100vh-10px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+        }
+    }
   
     return (
-      <div>
+      <div style={Styles.loginBody}>
         <input
           type="email"
           placeholder="Email"
