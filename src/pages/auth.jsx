@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Router, { useRouter } from 'next/router';  // Import Next.js router
 import { supabase } from "../../lib/supabase";
 
 export default function Auth() {
@@ -15,12 +16,35 @@ export default function Auth() {
     };
   
     const handleLogin = async () => {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: user, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      if (error) setError(error.message);
+  
+      if (error) {
+        setError(error.message);
+      } else {
+        console.log("LOGGED IN");
+  
+        // Now check if the user has a house
+        try {
+          const userID = user?.user?.id; // Get user ID after login
+          const userHouse = await getUserHouse(userID);
+  
+          if (!userHouse || userHouse.length === 0) {
+            router.push('/newHouse');
+          }
+          else
+          {
+            router.push('/calendarPage')
+          }
+        } catch (error) {
+          console.error("Error checking user house:", error);
+          setError("Failed to check if user has a house.");
+        }
+      }
     };
+  
 
     const Styles = {
         loginBody: {
