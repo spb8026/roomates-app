@@ -1,78 +1,66 @@
 import { useState } from "react";
-import Router, { useRouter } from 'next/router';  // Import Next.js router
+import Router from "next/router";
 import { supabase } from "../../lib/supabase";
+import { getUserHouse } from "../userService";
 
 export default function Auth() {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
-  
-    const handleSignUp = async () => {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-      if (error) setError(error.message);
-    };
-  
-    const handleLogin = async () => {
-      const { data: user, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-  
-      if (error) {
-        setError(error.message);
-      } else {
-        console.log("LOGGED IN");
-  
-        // Now check if the user has a house
-        try {
-          const userID = user?.user?.id; // Get user ID after login
-          const userHouse = await getUserHouse(userID);
-  
-          if (!userHouse || userHouse.length === 0) {
-            router.push('/newHouse');
-          }
-          else
-          {
-            router.push('/calendarPage')
-          }
-        } catch (error) {
-          console.error("Error checking user house:", error);
-          setError("Failed to check if user has a house.");
-        }
-      }
-    };
-  
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
 
-    const Styles = {
-        loginBody: {
-            width: '100vw-10px',
-            height: '100vh-10px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-        }
+  const handleSignUp = async () => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    if (error) {
+      setError(error.message);
     }
-  
-    return (
-      <div style={Styles.loginBody}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button onClick={handleSignUp}>Sign Up</button>
-        <button onClick={handleLogin}>Login</button>
-        {error && <p>{error}</p>}
-      </div>
-    );
+  };
+
+  const handleLogin = async () => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setError(error.message);
+    } else {
+      try {
+        const userID = data.user?.id;
+        const userHouse = await getUserHouse(userID);
+
+        if (!userHouse || userHouse.length === 0) {
+          Router.push("/newHouse");
+        } else {
+          Router.push("/calendarPage");
+        }
+      } catch (err) {
+        Router.push("/newHouse");
+        console.error("Error checking user house:", err);
+        setError("Failed to verify house membership.");
+      }
+    }
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button onClick={handleSignUp}>Sign Up</button>
+      <button onClick={handleLogin}>Login</button>
+      {error && <p>{error}</p>}
+    </div>
+  );
 }

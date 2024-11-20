@@ -4,3 +4,7 @@ interface House {
     house_code: string,
     name: string
 }
+
+interface User {
+    id: string,
+}
