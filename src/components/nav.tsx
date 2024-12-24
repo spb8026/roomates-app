@@ -4,14 +4,14 @@ import { faMoneyBill, faRightFromBracket, faShoppingBag } from "@fortawesome/fre
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { supabase } from "../../lib/supabase";
 import { Console } from "console";
-import router from "next/router";
+import Router from "next/router";
 
 export default function Nav(){
 
     const logout = async () => {
         const {error} = await supabase.auth.signOut();
         if (error) { console.log("AHHH")}
-        else {router.push('/auth')}
+        else {Router.push('/auth')}
     }
 
 
@@ -33,16 +33,16 @@ export default function Nav(){
 
     return (
         <div style={Styles.navHolder}>
-            <button style={Styles.navButton}>
+            <button style={Styles.navButton} onClick={() => Router.push("/calendarPage")}>
                 <FontAwesomeIcon icon={faCalendar}></FontAwesomeIcon>
             </button>
-            <button style={Styles.navButton}>
+            <button style={Styles.navButton} onClick={() => Router.push("/splitPayments")}>
                 <FontAwesomeIcon icon={faMoneyBill}></FontAwesomeIcon>
             </button>
-            <button style={Styles.navButton}>
+            <button style={Styles.navButton} onClick={() => Router.push("/shopping")}>
                 <FontAwesomeIcon icon={faShoppingBag}></FontAwesomeIcon>
             </button>
-            <button style={Styles.navButton}>
+            <button style={Styles.navButton} onClick={() => Router.push("/houseChat")} >
                 <FontAwesomeIcon icon={faComments} />
             </button>
             <button style={Styles.navButton} onClick={logout}>

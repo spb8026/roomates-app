@@ -24,9 +24,9 @@ function Chat() {
       }
       setMessages(data || []);
     };
-  
+
     fetchMessages();
-  
+
     // Set up the message real-time listener
     const messageChannel = supabase
       .channel('realtime:Messages')
@@ -41,16 +41,14 @@ function Chat() {
         }
       )
       .subscribe((status) => {
-        console.log('Subscription status:', status); // Log subscription status
+        console.log('Subscription status:', status);
       });
-  
+
     // Cleanup on unmount
     return () => {
-      messageChannel.unsubscribe(); // Ensure this only happens on unmount
+      messageChannel.unsubscribe();
     };
   }, []);
-  
-  
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -60,8 +58,8 @@ function Chat() {
       try {
         const data = await sendMessage(user.house_code, user.id, newMessage);
         if (data) {
-          console.log("sent")
-          setNewMessage(''); // Clear the input field
+          console.log("sent");
+          setNewMessage('');
         }
       } catch (error) {
         console.error('Error sending message:', error);
@@ -70,25 +68,84 @@ function Chat() {
   };
 
   return (
-    <div>
-      <p>{user?.id}</p>
-      <div>
+    <div style={styles.container}>
+      <div style={styles.messageList}>
         {messages.map((message) => (
-          <p key={message.id}>{message.content}</p>
+          <div key={message.id} style={styles.message}>
+            <span style={styles.userId}>{message.user_id}:</span>
+            <span style={styles.content}>{message.content}</span>
+          </div>
         ))}
       </div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={styles.form}>
         <input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type your message..."
+          style={styles.input}
         />
-        <button type="submit">Send</button>
+        <button type="submit" style={styles.button}>Send</button>
       </form>
     </div>
   );
 }
 
-export default Chat;
+const styles = {
+  container: {
+    maxWidth: '1200p',
+    margin: '0 auto',
+    padding: '20px',
+    fontFamily: 'Arial, sans-serif',
+    color: '#000',
+    backgroundColor: '#fff',
+    borderRadius: '10px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+  },
+  messageList: {
+    marginBottom: '20px',
+    maxHeight: '400px',
+    overflowY: 'auto',
+  },
+  message: {
+    backgroundColor: '#f1f1f1',
+    padding: '10px',
+    borderRadius: '5px',
+    marginBottom: '10px',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  userId: {
+    fontWeight: 'bold',
+    marginBottom: '5px',
+  },
+  content: {
+    fontSize: '14px',
+  },
+  form: {
+    display: 'flex',
+    gap: '10px',
+  },
+  input: {
+    flex: '1',
+    padding: '10px',
+    border: '1px solid #ddd',
+    borderRadius: '5px',
+    fontSize: '14px',
+  },
+  button: {
+    padding: '10px 20px',
+    backgroundColor: '#000',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    transition: 'background-color 0.2s',
+  },
+  buttonHover: {
+    backgroundColor: '#333',
+  },
+};
 
+export default Chat;
