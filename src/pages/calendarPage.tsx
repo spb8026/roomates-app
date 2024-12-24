@@ -1,3 +1,4 @@
+import { height } from "@fortawesome/free-brands-svg-icons/fa42Group";
 import { useEffect, useRef, useState } from "react";
 
 interface Event {
@@ -57,13 +58,12 @@ export default function CalendarPage() {
   
     const styles = {
       calendarContainer: {
-        fontFamily: "Arial, sans-serif",
         color: "#fff",
         backgroundColor: "#181818",
         padding: "20px",
         borderRadius: "10px",
         width: "80%",
-        overflow: "scroll"
+        overflow: "hidden"
       },
       calendarHeader: {
         marginBottom: "20px",
@@ -85,19 +85,24 @@ export default function CalendarPage() {
         marginRight: "10px",
       },
       timeSlot: {
+        display: "flex", // Added for centering
+        alignItems: "center", // Added for vertical centering
+        justifyContent: "flex-end", // Align text to the right
         position: "relative" as const,
         height: "60px",
         fontSize: "12px",
-        textAlign: "right" as const,
         paddingRight: "5px",
         color: "#a0a0a0",
         borderBottom: "1px solid #333",
       },
+      
       weekGrid: {
         flex: 1,
         display: "grid",
-        gridTemplateColumns: "repeat(7, 1fr)",
-        gap: "10px",
+        gridTemplateColumns: "repeat(8, 1fr)",
+        gap: "5px",
+        height: "200%",
+        overflow: "scroll"
       },
       dayColumn: {
         position: "relative" as const,
@@ -105,15 +110,21 @@ export default function CalendarPage() {
         flexDirection: "column" as const,
         backgroundColor: "#222",
         borderRadius: "10px",
-        overflow: "hidden",
+        height: "100%" 
       },
+      
       dayHeader: {
+        position: "sticky",
+        top: "0",
         textAlign: "center" as const,
         padding: "10px",
         fontWeight: "bold",
         color: "#ffffff",
         borderBottom: "1px solid #333",
+        backgroundColor: "#222", // Ensure background color persists when sticky
+        zIndex: 2, // Ensure the header appears above other content
       },
+      
       dayEvents: {
         flex: 1,
         position: "relative" as const,
@@ -148,60 +159,55 @@ export default function CalendarPage() {
     };
   
     return (
-    //   <div style={styles.pageContainer}>
-    //     <div style={styles.calendarContainer}>
-    //       <div style={styles.calendarHeader}>
-    //         <h2 style={styles.headerTitle}>{month} 2024</h2>
-    //       </div>
-    //       <div style={styles.calendarBody}>
-    //       <div style={styles.timeColumn}>
-    //           {timeSlots.map((time, index) => (
-    //             <div key={index} style={styles.timeSlot}>
-    //               {time}
-    //             </div>
-    //           ))}
-    //         </div>
-    //         <div style={styles.weekGrid}>
-    //           {days.map((day, dayIndex) => (
-    //             <div key={dayIndex} style={styles.dayColumn}>
-    //               <div style={styles.dayHeader}>{day}</div>
-    //               <div style={styles.dayEventGrid}>
-    //                 {timeSlots.map((_, timeIndex) => (
-    //                   <div
-    //                     key={timeIndex}
-    //                     style={{
-    //                       ...styles.timeLine,
-    //                       top: `${(timeIndex / timeSlots.length) * 100}%`,
-    //                     }}
-    //                   />
-    //                 ))}
-    //                 {events
-    //                   .filter((event) => event.dayIndex === dayIndex)
-    //                   .map((event, index) => {
-    //                     const position = calculateEventPosition(event.startTime, event.endTime);
-    //                     return (
-    //                       <div
-    //                         key={index}
-    //                         style={{
-    //                           ...styles.event,
-    //                           top: position.top,
-    //                           height: position.height,
-    //                         }}
-    //                       >
-    //                         {event.title}
-    //                       </div>
-    //                     );
-    //                   })}
-    //               </div>
-    //             </div>
-    //           ))}
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div>
     <div style={styles.pageContainer}>
-        
-    </div>
+        <div style={styles.calendarContainer}>
+            <h2>
+                {month}
+            </h2>
+            <div style={styles.weekGrid}>
+            <div style={styles.timeColumn}>
+                <div style={styles.dayEventGrid}>
+                    {timeSlots.map((time, timeIndex) => (
+                    <div key={timeIndex} style={styles.timeSlot}>{time}</div>
+                    ))}
+                </div>
+                </div>
+                {days.map((day, dayIndex) => (
+                <div key={dayIndex} style={styles.dayColumn}>
+                  <div style={styles.dayHeader}>{day}</div>
+                  <div style={styles.dayEventGrid}>
+                    {timeSlots.map((_, timeIndex) => (
+                      <div
+                        key={timeIndex}
+                        style={{
+                          ...styles.timeLine,
+                          top: `${(timeIndex / timeSlots.length) * 100}%`,
+                        }}
+                      />
+                    ))}
+                    {events
+                      .filter((event) => event.dayIndex === dayIndex)
+                      .map((event, index) => {
+                        const position = calculateEventPosition(event.startTime, event.endTime);
+                        return (
+                          <div
+                            key={index}
+                            style={{
+                              ...styles.event,
+                              top: position.top,
+                              height: position.height,
+                            }}
+                          >
+                            {event.title}
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              ))}
+            </div>
+            </div>
+        </div>
     );
   }
   
